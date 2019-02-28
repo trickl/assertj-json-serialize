@@ -1,4 +1,4 @@
-# Trickl AssertJ JSON
+# Trickl AssertJ JSON Serialize
 
 [![build_status](https://travis-ci.com/trickl/assertj-json-serialize.svg?branch=master)](https://travis-ci.com/trickl/assertj-json-serialize)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1f66926c8f391be20ad4/maintainability)](https://codeclimate.com/github/trickl/assertj-json-serialize/maintainability)
@@ -15,9 +15,9 @@ Requires Maven and a Java 8 compiler installed on your system.
 
 ```
     assertThat(account)
-        .jsonDeserializationAsExpected()
-        .jsonSerializationAsExpected()
-        .jsonSchemaAsExpected();
+        .deserializesAsExpected()
+        .serializesAsExpected()
+        .schemaAsExpected();
 ```
 
 ### Installing
