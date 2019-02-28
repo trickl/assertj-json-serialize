@@ -15,9 +15,9 @@ Requires Maven and a Java 8 compiler installed on your system.
 
 ```
     assertThat(account)
-        .jsonDeserializationAsExpected()
-        .jsonSerializationAsExpected()
-        .jsonSchemaAsExpected();
+        .deserializesAsExpected()
+        .serializesAsExpected()
+        .schemaAsExpected();
 ```
 
 ### Installing
