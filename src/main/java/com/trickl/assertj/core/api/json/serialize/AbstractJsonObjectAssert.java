@@ -42,7 +42,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    * @return A new assertion object
    * @throws IOException If any file errors occur
    */
-  public S serializationAsExpected() {
+  public S serializesAsExpected() {
     if (serializationResourcePath == null) {
       serializationResourcePath =
           classAsResourcePathConvention(actual.getObject().getClass(), ".example.json");
@@ -62,7 +62,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    * @return A new assertion object
    * @throws IOException If any file errors occur
    */
-  public S deserializationAsExpected() {
+  public S deserializesAsExpected() {
     if (deserializationResourceUrl == null) {
       deserializationResourceUrl =
           classAsResourceUrlConvention(actual.getObject().getClass(), ".example.json");

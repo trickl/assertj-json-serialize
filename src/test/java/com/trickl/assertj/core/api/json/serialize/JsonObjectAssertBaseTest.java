@@ -1,6 +1,7 @@
 package com.trickl.assertj.core.api.json.serialize;
 
 import com.trickl.assertj.core.api.json.JsonAssert;
+import com.trickl.assertj.examples.Example;
 import org.assertj.core.api.BaseTestTemplate;
 
 /**
@@ -10,7 +11,9 @@ public abstract class JsonObjectAssertBaseTest extends BaseTestTemplate<JsonObje
   
   @Override
   protected JsonObjectAssert create_assertions() {
-    return new JsonObjectAssert(new JsonObject("abc"));
+    Example example = new Example();
+    example.setMyField("abc");
+    return new JsonObjectAssert(new JsonObject(example));
   }
 
   @Override
