@@ -44,10 +44,11 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    */
   public S serializationAsExpected() {
     if (serializationResourcePath == null) {
-      serializationResourcePath = classAsResourcePathConvention(actual.getClass(), ".example.json");
+      serializationResourcePath =
+          classAsResourcePathConvention(actual.getObject().getClass(), ".example.json");
     }
 
-    String jsonString = serialize(actual);
+    String jsonString = serialize(actual.getObject());
     com.trickl.assertj.core.api.JsonAssertions.assertThat(json(jsonString))
         .allowingAnyArrayOrdering()
         .writeActualToFileOnFailure()
@@ -63,10 +64,12 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    */
   public S deserializationAsExpected() {
     if (deserializationResourceUrl == null) {
-      deserializationResourceUrl = classAsResourceUrlConvention(actual.getClass(), ".example.json");
+      deserializationResourceUrl =
+          classAsResourceUrlConvention(actual.getObject().getClass(), ".example.json");
     }
 
-    assertThat(deserialize(deserializationResourceUrl, actual.getClass())).isEqualTo(actual);
+    assertThat(deserialize(deserializationResourceUrl, actual.getObject().getClass()))
+        .isEqualTo(actual.getObject());
     return myself;
   }
 
@@ -78,7 +81,8 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    */
   public S schemaAsExpected() {
     if (schemaResourcePath == null) {
-      schemaResourcePath = classAsResourcePathConvention(actual.getClass(), ".schema.json");
+      schemaResourcePath =
+          classAsResourcePathConvention(actual.getObject().getClass(), ".schema.json");
     }
 
     String jsonSchema = schema(actual);
@@ -128,7 +132,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   private String schema(Object obj) {
     try {
       JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(objectMapper);
-      JsonSchema schema = schemaGen.generateSchema(actual.getClass());
+      JsonSchema schema = schemaGen.generateSchema(actual.getObject().getClass());
       return objectMapper.writeValueAsString(schema);
     } catch (IOException e) {
       throw new UncheckedIOException("Unable to generate JSON schema", e);
