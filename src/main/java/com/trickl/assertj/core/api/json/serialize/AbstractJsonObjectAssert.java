@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.trickl.assertj.core.api.json.JsonContainer;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
@@ -31,6 +33,8 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   private Path serializationResourcePath = null;
 
   private URL deserializationResourceUrl = null;
+  
+  private boolean createExpectedIfAbsent = true;
 
   public AbstractJsonObjectAssert(JsonObject actual, Class<?> selfType) {
     super(actual, selfType);
@@ -47,11 +51,17 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
       serializationResourcePath =
           classAsResourcePathConvention(actual.getObject().getClass(), ".example.json");
     }
+    
+    Path actualPath = null;
+    if (createExpectedIfAbsent && createEmptyJsonIfMissing(serializationResourcePath)) {
+      actualPath = serializationResourcePath;
+    }
+    assertThat(serializationResourcePath).exists();
 
     String jsonString = serialize(actual.getObject());
     com.trickl.assertj.core.api.JsonAssertions.assertThat(json(jsonString))
-        .allowingAnyArrayOrdering()
-        .writeActualToFileOnFailure()
+        .allowingAnyArrayOrdering()        
+        .writeActualToFileOnFailure(actualPath)
         .isSameJsonAs(safeJson(serializationResourcePath));
     return myself;
   }
@@ -84,13 +94,35 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
       schemaResourcePath =
           classAsResourcePathConvention(actual.getObject().getClass(), ".schema.json");
     }
+    
+    Path actualPath = null;
+    if (createExpectedIfAbsent && createEmptyJsonIfMissing(schemaResourcePath)) {
+      actualPath = schemaResourcePath;
+    }
+    assertThat(schemaResourcePath).exists();
 
     String jsonSchema = schema(actual);
     com.trickl.assertj.core.api.JsonAssertions.assertThat(json(jsonSchema))
         .allowingAnyArrayOrdering()
-        .writeActualToFileOnFailure()
+        .writeActualToFileOnFailure(actualPath)
         .isSameJsonAs(safeJson(schemaResourcePath));
     return myself;
+  }
+  
+  private boolean createEmptyJsonIfMissing(Path path) {
+    if (!path.toFile().exists()) {
+      try {
+        path.getParent().toFile().mkdirs();
+        path.toFile().createNewFile();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
+          bw.write("{}");
+        }   
+        return true;
+      } catch (IOException e) {
+        throw new UncheckedIOException("Could not create missing expected file", e);
+      }      
+    }
+    return false;
   }
 
   public S usingSchemaResourcePath(Path path) {
@@ -110,6 +142,11 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
 
   public S usingObjectMapper(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
+    return myself;
+  }
+  
+  public S doNotCreateExpectedIfAbsent() {
+    createExpectedIfAbsent = false;
     return myself;
   }
 
