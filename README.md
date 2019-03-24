@@ -1,8 +1,8 @@
 # Trickl AssertJ JSON Serialize
 
 [![build_status](https://travis-ci.com/trickl/assertj-json-serialize.svg?branch=master)](https://travis-ci.com/trickl/assertj-json-serialize)
-[![Maintainability](https://api.codeclimate.com/v1/badges/1f66926c8f391be20ad4/maintainability)](https://codeclimate.com/github/trickl/assertj-json-serialize/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/1f66926c8f391be20ad4/test_coverage)](https://codeclimate.com/github/trickl/assertj-json-serialize/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/1c360892853bbf2a61d5/maintainability)](https://codeclimate.com/github/trickl/assertj-json-serialize/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/1c360892853bbf2a61d5/test_coverage)](https://codeclimate.com/github/trickl/assertj-json-serialize/test_coverage)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 AssertJ fluent assertions for the serialization and deserialization of POJOs into JSON.
