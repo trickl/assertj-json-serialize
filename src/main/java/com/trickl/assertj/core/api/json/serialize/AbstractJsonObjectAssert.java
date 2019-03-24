@@ -44,7 +44,6 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    * Check the json serialization of the object matches the expected output.
    *
    * @return A new assertion object
-   * @throws IOException If any file errors occur
    */
   public S serializesAsExpected() {
     if (serializationResourcePath == null) {
@@ -70,7 +69,6 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    * Check the json deserialization of the object matches the expected output.
    *
    * @return A new assertion object
-   * @throws IOException If any file errors occur
    */
   public S deserializesAsExpected() {
     if (deserializationResourceUrl == null) {
@@ -87,7 +85,6 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
    * Check the json schema of the object matches the expected output.
    *
    * @return A new assertion object
-   * @throws IOException If any file errors occur
    */
   public S schemaAsExpected() {
     if (schemaResourcePath == null) {

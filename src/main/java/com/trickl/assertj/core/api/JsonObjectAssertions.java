@@ -10,7 +10,7 @@ public class JsonObjectAssertions {
     return new JsonObjectAssert(new JsonObject(object));
   }
   
-  /** Creates a new <code>{@link Assertions}</code>. */
+  /** Creates a new <code>{@link JsonObjectAssertions}</code>. */
   protected JsonObjectAssertions() {
     // empty
   }
