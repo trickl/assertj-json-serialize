@@ -29,7 +29,7 @@ To install from Maven Central:
         .schemaAsExpected();
 ```
 
-### Installing
+### Building
 
 To download the library into a folder called "assertj-json-serialize" run
 
