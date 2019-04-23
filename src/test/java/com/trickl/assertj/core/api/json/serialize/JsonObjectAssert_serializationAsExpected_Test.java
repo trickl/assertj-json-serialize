@@ -22,6 +22,13 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
   }
   
   @Test
+  public void should_pass_on_deserialization_with_error() {         
+    Example example = new Example();
+     assertThat(example)
+        .deserializesWithoutError();     
+  }
+  
+  @Test
   public void should_pass_on_deserialization_equality() {         
     Example example = new Example();
     example.setMyField("abc");

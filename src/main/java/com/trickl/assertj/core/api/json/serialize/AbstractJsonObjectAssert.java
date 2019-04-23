@@ -80,6 +80,22 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
         .isEqualTo(actual.getObject());
     return myself;
   }
+  
+  /**
+   * Check the json deserialization of the object creates a non null object without error.
+   *
+   * @return A new assertion object
+   */
+  public S deserializesWithoutError() {
+    if (deserializationResourceUrl == null) {
+      deserializationResourceUrl =
+          classAsResourceUrlConvention(actual.getObject().getClass(), ".example.json");
+    }
+
+    assertThat(deserialize(deserializationResourceUrl, actual.getObject().getClass()))
+        .isNotNull();
+    return myself;
+  }
 
   /**
    * Check the json schema of the object matches the expected output.
