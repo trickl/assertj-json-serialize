@@ -18,7 +18,6 @@ before_script:
 - ".travis/before-script.sh"
 script:
 - mvn test
-after_script:
 - "./cc-test-reporter format-coverage -d -t jacoco ./target/jacoco-ut/jacoco.xml"
 - "./cc-test-reporter upload-coverage -d"
 before_deploy:
@@ -33,6 +32,7 @@ deploy:
     repo: trickl/assertj-json-serialize
     all_branches: true
 - provider: releases
+  skip_cleanup: true
   api_key:
     secure: fIprgeLah/zaqST6AF+V25bAm+bO+XXBtqY7BVp3znkVG6RTKGp5MFDziUyV3l74RNLkH57Jdpi7jYNjwf6h3XWVWdHrqjCPGfDwIHtOJS9mH7oS5UG0Q2KzIICHpd7/r2ebKI4l90dwOGSY8BBTIUmD3WRtY5B4X3gZEehAks45c/v3Am3jyRJ2KGd6XbXH7Md08npN6p4Zyzl1zv4qOrH0WAUpuuuDQ/kn0Mn7xALaEEl2jBrmvUZFw25xDUMNmHGMdD8eHSVC2lR/d7g4u1qGC9nvoT8LqvHErzlxVCyaiFhk+Z1KpKeHmtidywzabx8LrrNCzuY8xTb3eY2ESnRVg7U1DiDS1P75XVtITIYIRf9iIESVzIjmsfA2+0jzBzAzqNl3OHutlfKa09RPTayt51H7J3ZGGRyBgEvkQhngDUf9nOoTrJ25COXd7eVWWzpKaliRMNL6XpOm4fadKJ8h0kaRW7HovCeD3qPCpT/QWgOTzffYpTHKmTytiM45rap4HA1z4NRMkHerxng6VdHCEM2sLZcV+M2CxioX2yf2+nj1WWWZey+pz9QPeQFetm8PFaAt/eSNNAEqrhbWGf9UIRlZWbF2rzSeHlHw7w+biDYCyVPxA9IJneYCBVeBm2sSfFqKUnitD3sT7ENohU5fhfn1qReRktDFpPJlPn4=
   file: ".travis.yml"
