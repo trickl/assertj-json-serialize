@@ -14,6 +14,8 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
+
 import org.assertj.core.api.AbstractAssert;
 
 /**
@@ -35,6 +37,8 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   private URL deserializationResourceUrl = null;
   
   private boolean createExpectedIfAbsent = true;
+
+  private String projectDir = null;
 
   public AbstractJsonObjectAssert(JsonObject actual, Class<?> selfType) {
     super(actual, selfType);
@@ -157,6 +161,11 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     this.objectMapper = objectMapper;
     return myself;
   }
+
+  public S usingProjectDirectory(String projectDir) {
+    this.projectDir = projectDir;
+    return myself;
+  }
   
   public S doNotCreateExpectedIfAbsent() {
     createExpectedIfAbsent = false;
@@ -197,18 +206,35 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     }
   }
 
-  private URL classAsResourceUrlConvention(Class clazz, String extension) {
+  private URL classAsResourceUrlConvention(Class<?> clazz, String extension) {
     String resourceName = clazz.getSimpleName() + extension;
     return clazz.getResource(resourceName);
   }
 
-  private Path classAsResourcePathConvention(Class clazz, String extension) {
-    String resourcePath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-    String projectDir = resourcePath.substring(0, resourcePath.indexOf("target"));
+  private Path classAsResourcePathConvention(Class<?> clazz, String extension) {
+    String projectDirectory = projectDir;
+    if (projectDirectory == null) {
+      projectDirectory = getProjectDirectoryFromLocalClazz(clazz);
+    }
+    if (projectDirectory == null) {
+      throw new RuntimeException(
+          "Project directory must be set explicity when using a non-local class.");
+    }    
     return Paths.get(
-        projectDir,
+        projectDirectory,
         "src/test/resources/",
         clazz.getPackage().getName().replaceAll("\\.", "/"),
         clazz.getSimpleName() + extension);
+  }
+
+  private String getProjectDirectoryFromLocalClazz(Class<?> clazz) {
+    CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+    if (codeSource != null) {
+      String resourcePath = codeSource.getLocation().getPath();
+      if (resourcePath.indexOf("target") >= 0) {
+        return resourcePath.substring(0, resourcePath.indexOf("target"));
+      }
+    }
+    return null;
   }
 }
