@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class Example {
-    @JsonProperty("my-field")
-    @JsonPropertyDescription("Description of my field")
-    private String myField;
+  @JsonProperty("my-field")
+  @JsonPropertyDescription("Description of my field")
+  private String myField;
 }

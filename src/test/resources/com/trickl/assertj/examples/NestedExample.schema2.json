@@ -1,0 +1,20 @@
+{
+  "id": "urn:jsonschema:com:trickl:assertj:examples:NestedExample",
+  "type": "object",
+  "properties": {
+    "second-example": {
+      "type": "object",
+      "$ref": "urn:jsonschema:com:trickl:assertj:examples:Example"
+    },
+    "first-example": {
+      "id": "urn:jsonschema:com:trickl:assertj:examples:Example",
+      "type": "object",
+      "properties": {
+        "my-field": {
+          "description": "Description of my field",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

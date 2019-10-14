@@ -1,0 +1,14 @@
+{
+  "id": "urn:jsonschema:com:trickl:assertj:examples:NestedExample",
+  "type": "object",
+  "properties": {
+    "second-example": {
+      "type": "object",
+      "$ref": "urn:jsonschema:com:trickl:assertj:examples:Example"
+    },
+    "first-example": {
+      "type": "object",
+      "$ref": "urn:jsonschema:com:trickl:assertj:examples:Example"
+    }
+  }
+}

@@ -7,6 +7,8 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 import com.trickl.assertj.examples.Example;
+import com.trickl.assertj.examples.NestedExample;
+
 import org.junit.Test;
 
 /**
@@ -66,6 +68,22 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
     Example example = new Example();
     example.setMyField("abc");
     assertThat(example)
+        .schemaAsExpected();     
+  }
+
+  @Test
+  public void should_respect_no_inlining() {         
+    NestedExample nested = new NestedExample();        
+    assertThat(nested)
+        .withNoInlineSchemas()
+        .schemaAsExpected();     
+  }
+
+  @Test
+  public void should_respect_allow_inlining() {         
+    NestedExample nested = new NestedExample();        
+    assertThat(nested)
+        .withSchemaFileExtension(".schema2.json")               
         .schemaAsExpected();     
   }
 }

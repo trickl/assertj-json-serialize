@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.trickl.assertj.core.api.json.JsonContainer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -28,6 +29,10 @@ import org.assertj.core.api.AbstractAssert;
 public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAssert<S>>
     extends AbstractAssert<S, JsonObject> {
 
+  private static final String DEFAULT_JSON_DATA_FILE_EXT = ".example.json";
+
+  private static final String DEFAULT_SCHEMA_FILE_EXT = ".schema.json";
+
   private ObjectMapper objectMapper = new ObjectMapper();
 
   private Path schemaResourcePath = null;
@@ -39,6 +44,12 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   private boolean createExpectedIfAbsent = true;
 
   private String projectDir = null;
+
+  private boolean noInlineSchemas = false;
+
+  private String jsonDataFileExtension = DEFAULT_JSON_DATA_FILE_EXT;
+
+  private String schemaFileExtension = DEFAULT_SCHEMA_FILE_EXT;
 
   public AbstractJsonObjectAssert(JsonObject actual, Class<?> selfType) {
     super(actual, selfType);
@@ -52,7 +63,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   public S serializesAsExpected() {
     if (serializationResourcePath == null) {
       serializationResourcePath =
-          classAsResourcePathConvention(actual.getObject().getClass(), ".example.json");
+          classAsResourcePathConvention(actual.getObject().getClass(), jsonDataFileExtension);
     }
     
     Path actualPath = null;
@@ -77,7 +88,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   public S deserializesAsExpected() {
     if (deserializationResourceUrl == null) {
       deserializationResourceUrl =
-          classAsResourceUrlConvention(actual.getObject().getClass(), ".example.json");
+          classAsResourceUrlConvention(actual.getObject().getClass(), jsonDataFileExtension);
     }
 
     assertThat(deserialize(deserializationResourceUrl, actual.getObject().getClass()))
@@ -93,7 +104,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   public S deserializesWithoutError() {
     if (deserializationResourceUrl == null) {
       deserializationResourceUrl =
-          classAsResourceUrlConvention(actual.getObject().getClass(), ".example.json");
+          classAsResourceUrlConvention(actual.getObject().getClass(), jsonDataFileExtension);
     }
 
     assertThat(deserialize(deserializationResourceUrl, actual.getObject().getClass()))
@@ -109,7 +120,8 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   public S schemaAsExpected() {
     if (schemaResourcePath == null) {
       schemaResourcePath =
-          classAsResourcePathConvention(actual.getObject().getClass(), ".schema.json");
+          classAsResourcePathConvention(actual.getObject().getClass(), 
+          schemaFileExtension);
     }
     
     Path actualPath = null;
@@ -172,7 +184,22 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     return myself;
   }
 
-  private <T> T deserialize(URL value, Class<T> clazz) {
+  public S withNoInlineSchemas() {
+    noInlineSchemas = true;
+    return myself;
+  }
+
+  public S withJsonDataFileExtension(String extension) {
+    jsonDataFileExtension = extension;
+    return myself;
+  }
+
+  public S withSchemaFileExtension(String extension) {
+    schemaFileExtension = extension;
+    return myself;
+  }
+
+  protected <T> T deserialize(URL value, Class<T> clazz) {
     try {
       return objectMapper.readValue(value, (Class<T>) clazz);
     } catch (IOException e) {
@@ -180,7 +207,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     }
   }
 
-  private String serialize(Object obj) {
+  protected String serialize(Object obj) {
     try {
       return objectMapper.writeValueAsString(obj);
     } catch (IOException e) {
@@ -188,11 +215,16 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     }
   }
 
-  private String schema(Object obj) {
+  protected String schema(Object obj) {
     try {
-      JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(objectMapper);
-      JsonSchema schema = schemaGen.generateSchema(actual.getObject().getClass());
-      return objectMapper.writeValueAsString(schema);
+      SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+      if (noInlineSchemas) {
+        visitor.setVisitorContext(new NoInlineSchemaVisitorContext());
+      }
+      objectMapper.acceptJsonFormatVisitor(actual.getObject().getClass(), visitor);
+      JsonSchema schema = visitor.finalSchema();
+      return  objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
+
     } catch (IOException e) {
       throw new UncheckedIOException("Unable to generate JSON schema", e);
     }
@@ -206,12 +238,12 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     }
   }
 
-  private URL classAsResourceUrlConvention(Class<?> clazz, String extension) {
+  protected URL classAsResourceUrlConvention(Class<?> clazz, String extension) {
     String resourceName = clazz.getSimpleName() + extension;
     return clazz.getResource(resourceName);
   }
 
-  private Path classAsResourcePathConvention(Class<?> clazz, String extension) {
+  protected Path classAsResourcePathConvention(Class<?> clazz, String extension) {
     String projectDirectory = projectDir;
     if (projectDirectory == null) {
       projectDirectory = getProjectDirectoryFromLocalClazz(clazz);
