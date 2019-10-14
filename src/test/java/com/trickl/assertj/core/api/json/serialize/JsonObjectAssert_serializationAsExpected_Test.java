@@ -7,6 +7,7 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 import com.trickl.assertj.examples.Example;
+import com.trickl.assertj.examples.NestedComplexExample;
 import com.trickl.assertj.examples.NestedExample;
 
 import org.junit.Test;
@@ -72,10 +73,10 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
   }
 
   @Test
-  public void should_respect_no_inlining() {         
+  public void should_respect_no_inlining_simple() {         
     NestedExample nested = new NestedExample();        
     assertThat(nested)
-        .withNoInlineSchemas()
+        .excludeInlineSchemaPackage("com.trickl.assertj.examples")
         .schemaAsExpected();     
   }
 
@@ -84,6 +85,14 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
     NestedExample nested = new NestedExample();        
     assertThat(nested)
         .withSchemaFileExtension(".schema2.json")               
+        .schemaAsExpected();     
+  }
+
+  @Test
+  public void should_respect_no_inlining_complex() {         
+    NestedComplexExample nested = new NestedComplexExample();        
+    assertThat(nested)           
+        .excludeInlineSchemaPackage("com.trickl.assertj.examples")
         .schemaAsExpected();     
   }
 }

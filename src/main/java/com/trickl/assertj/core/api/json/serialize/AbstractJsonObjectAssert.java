@@ -16,6 +16,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.assertj.core.api.AbstractAssert;
 
@@ -45,7 +47,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
 
   private String projectDir = null;
 
-  private boolean noInlineSchemas = false;
+  private List<String> excludeInlineSchemaPackages = new ArrayList<>();
 
   private String jsonDataFileExtension = DEFAULT_JSON_DATA_FILE_EXT;
 
@@ -184,8 +186,8 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     return myself;
   }
 
-  public S withNoInlineSchemas() {
-    noInlineSchemas = true;
+  public S excludeInlineSchemaPackage(String packageName) {
+    excludeInlineSchemaPackages.add(packageName);
     return myself;
   }
 
@@ -218,8 +220,9 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   protected String schema(Object obj) {
     try {
       SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
-      if (noInlineSchemas) {
-        visitor.setVisitorContext(new NoInlineSchemaVisitorContext());
+      if (excludeInlineSchemaPackages.size() > 0) {
+        visitor.setVisitorContext(
+            new ExcludeInlineSchemaVisitorContext(excludeInlineSchemaPackages));
       }
       objectMapper.acceptJsonFormatVisitor(actual.getObject().getClass(), visitor);
       JsonSchema schema = visitor.finalSchema();
