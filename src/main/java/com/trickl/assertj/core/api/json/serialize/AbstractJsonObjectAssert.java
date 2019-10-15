@@ -45,6 +45,8 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   
   private boolean createExpectedIfAbsent = true;
 
+  private boolean allowAdditionalProperties = true;
+
   private String projectDir = null;
 
   private List<String> excludeInlineSchemaPackages = new ArrayList<>();
@@ -201,6 +203,11 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     return myself;
   }
 
+  public S disallowAdditionalProperties() {
+    allowAdditionalProperties = false;
+    return myself;
+  }
+
   protected <T> T deserialize(URL value, Class<T> clazz) {
     try {
       return objectMapper.readValue(value, (Class<T>) clazz);
@@ -223,9 +230,12 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
       if (excludeInlineSchemaPackages.size() > 0) {
         visitor.setVisitorContext(
             new ExcludeInlineSchemaVisitorContext(excludeInlineSchemaPackages));
-      }
+      }      
       objectMapper.acceptJsonFormatVisitor(actual.getObject().getClass(), visitor);
       JsonSchema schema = visitor.finalSchema();
+      if (!allowAdditionalProperties && schema.isObjectSchema()) {
+        schema.asObjectSchema().rejectAdditionalProperties();
+      }
       return  objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
 
     } catch (IOException e) {

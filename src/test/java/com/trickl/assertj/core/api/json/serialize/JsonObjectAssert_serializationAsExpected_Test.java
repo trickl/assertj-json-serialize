@@ -89,6 +89,15 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
   }
 
   @Test
+  public void can_disallow_additional_properties() {         
+    Example example = new Example();        
+    assertThat(example)
+        .disallowAdditionalProperties()
+        .withSchemaFileExtension(".schema2.json")               
+        .schemaAsExpected();     
+  }
+
+  @Test
   public void should_respect_no_inlining_complex() {         
     NestedComplexExample nested = new NestedComplexExample();        
     assertThat(nested)           
