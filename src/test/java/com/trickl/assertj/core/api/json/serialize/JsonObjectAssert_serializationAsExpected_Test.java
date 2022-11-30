@@ -1,12 +1,10 @@
 package com.trickl.assertj.core.api.json.serialize;
 
-import com.trickl.assertj.core.api.json.JsonAssert;
 import static com.trickl.assertj.core.api.JsonObjectAssertions.assertThat;
 
-import java.util.AbstractMap;
-import java.util.Map;
-
-import com.trickl.assertj.examples.Example;
+import com.trickl.assertj.core.api.json.JsonAssert;
+import com.trickl.assertj.examples.ExampleEnum;
+import com.trickl.assertj.examples.ExampleObject;
 import com.trickl.assertj.examples.NestedComplexExample;
 import com.trickl.assertj.examples.NestedExample;
 
@@ -30,14 +28,14 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
   
   @Test
   public void should_pass_on_deserialization_with_error() {         
-    Example example = new Example();
+    ExampleObject example = new ExampleObject();
     assertThat(example)
         .deserializesWithoutError();     
   }
   
   @Test
   public void should_pass_on_deserialization_equality() {         
-    Example example = new Example();
+    ExampleObject example = new ExampleObject();
     example.setMyField("abc");
     assertThat(example)
         .deserializesAsExpected();     
@@ -45,7 +43,7 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
       
   @Test
   public void should_pass_on_serialization_match() {         
-    Example example = new Example();
+    ExampleObject example = new ExampleObject();
     example.setMyField("abc");
     assertThat(example)
         .serializesAsExpected();     
@@ -53,7 +51,7 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
 
   @Test
   public void should_allow_explicit_project_directory() {    
-    Example example = new Example();
+    ExampleObject example = new ExampleObject();
     String testPath = this.getClass().getProtectionDomain()
         .getCodeSource().getLocation().getPath();
     String projectDirectory = testPath.substring(0, testPath.indexOf("target")) 
@@ -61,12 +59,12 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
     example.setMyField("abc");
     assertThat(example)
         .usingProjectDirectory(projectDirectory)
-        .serializesAsExpected();    
+        .serializesAsExpected(); 
   }
   
   @Test
   public void should_pass_on_schema_match() {         
-    Example example = new Example();
+    ExampleObject example = new ExampleObject();
     example.setMyField("abc");
     assertThat(example)
         .schemaAsExpected();     
@@ -90,7 +88,7 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
 
   @Test
   public void can_disallow_additional_properties() {         
-    Example example = new Example();        
+    ExampleObject example = new ExampleObject();        
     assertThat(example)
         .disallowAdditionalProperties()
         .withSchemaFileExtension(".schema2.json")               
@@ -102,6 +100,14 @@ public class JsonObjectAssert_serializationAsExpected_Test extends JsonObjectAss
     NestedComplexExample nested = new NestedComplexExample();        
     assertThat(nested)           
         .excludeInlineSchemaPackage("com.trickl.assertj.examples")
+        .schemaAsExpected();     
+  }
+
+  @Test
+  public void should_handle_enums() {         
+    ExampleEnum example = ExampleEnum.SECOND;
+    assertThat(example)
+        .serializesAsExpected()
         .schemaAsExpected();     
   }
 }

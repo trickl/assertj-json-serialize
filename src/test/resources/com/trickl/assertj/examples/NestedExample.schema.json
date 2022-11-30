@@ -1,14 +1,14 @@
 {
-  "id": "urn:jsonschema:com:trickl:assertj:examples:NestedExample",
-  "type": "object",
-  "properties": {
-    "second-example": {
-      "type": "object",
-      "$ref": "urn:jsonschema:com:trickl:assertj:examples:Example"
+  "type" : "object",
+  "id" : "urn:jsonschema:com:trickl:assertj:examples:NestedExample",
+  "properties" : {
+    "first-example" : {
+      "type" : "object",
+      "$ref" : "urn:jsonschema:com:trickl:assertj:examples:ExampleObject"
     },
-    "first-example": {
-      "type": "object",
-      "$ref": "urn:jsonschema:com:trickl:assertj:examples:Example"
+    "second-example" : {
+      "type" : "object",
+      "$ref" : "urn:jsonschema:com:trickl:assertj:examples:ExampleObject"
     }
   }
 }

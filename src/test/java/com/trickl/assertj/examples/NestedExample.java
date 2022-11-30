@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class NestedExample {
   @JsonProperty("first-example")    
-  private Example firstExample;
+  private ExampleObject firstExample;
 
   @JsonProperty("second-example")
-  private Example secondExample;
+  private ExampleObject secondExample;
 }

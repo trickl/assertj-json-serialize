@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 public class NestedComplexExample {
   @JsonProperty("list-example")    
-  private List<Example> firstExample;
+  private List<ExampleObject> firstExample;
 
   @JsonProperty("map-example")
-  private Map<String, Example> secondExample;
+  private Map<String, ExampleObject> secondExample;
 }

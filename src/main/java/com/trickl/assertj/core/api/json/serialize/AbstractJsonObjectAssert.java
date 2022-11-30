@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import com.fasterxml.jackson.module.jsonSchema.customProperties.TitleSchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.trickl.assertj.core.api.json.JsonContainer;
 import java.io.BufferedWriter;
@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.assertj.core.api.AbstractAssert;
 
 /**
@@ -42,7 +41,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   private Path serializationResourcePath = null;
 
   private URL deserializationResourceUrl = null;
-  
+
   private boolean createExpectedIfAbsent = true;
 
   private boolean allowAdditionalProperties = true;
@@ -69,7 +68,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
       serializationResourcePath =
           classAsResourcePathConvention(actual.getObject().getClass(), jsonDataFileExtension);
     }
-    
+
     Path actualPath = null;
     if (createExpectedIfAbsent && createEmptyJsonIfMissing(serializationResourcePath)) {
       actualPath = serializationResourcePath;
@@ -78,7 +77,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
 
     String jsonString = serialize(actual.getObject());
     com.trickl.assertj.core.api.JsonAssertions.assertThat(json(jsonString))
-        .allowingAnyArrayOrdering()        
+        .allowingAnyArrayOrdering()
         .writeActualToFileOnFailure(actualPath)
         .isSameJsonAs(safeJson(serializationResourcePath));
     return myself;
@@ -99,7 +98,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
         .isEqualTo(actual.getObject());
     return myself;
   }
-  
+
   /**
    * Check the json deserialization of the object creates a non null object without error.
    *
@@ -111,8 +110,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
           classAsResourceUrlConvention(actual.getObject().getClass(), jsonDataFileExtension);
     }
 
-    assertThat(deserialize(deserializationResourceUrl, actual.getObject().getClass()))
-        .isNotNull();
+    assertThat(deserialize(deserializationResourceUrl, actual.getObject().getClass())).isNotNull();
     return myself;
   }
 
@@ -124,10 +122,9 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   public S schemaAsExpected() {
     if (schemaResourcePath == null) {
       schemaResourcePath =
-          classAsResourcePathConvention(actual.getObject().getClass(), 
-          schemaFileExtension);
+          classAsResourcePathConvention(actual.getObject().getClass(), schemaFileExtension);
     }
-    
+
     Path actualPath = null;
     if (createExpectedIfAbsent && createEmptyJsonIfMissing(schemaResourcePath)) {
       actualPath = schemaResourcePath;
@@ -141,7 +138,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
         .isSameJsonAs(safeJson(schemaResourcePath));
     return myself;
   }
-  
+
   private boolean createEmptyJsonIfMissing(Path path) {
     if (!path.toFile().exists()) {
       try {
@@ -149,11 +146,11 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
         path.toFile().createNewFile();
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
           bw.write("{}");
-        }   
+        }
         return true;
       } catch (IOException e) {
         throw new UncheckedIOException("Could not create missing expected file", e);
-      }      
+      }
     }
     return false;
   }
@@ -182,7 +179,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     this.projectDir = projectDir;
     return myself;
   }
-  
+
   public S doNotCreateExpectedIfAbsent() {
     createExpectedIfAbsent = false;
     return myself;
@@ -227,16 +224,16 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
   protected String schema(Object obj) {
     try {
       SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
-      if (excludeInlineSchemaPackages.size() > 0) {
+      if (!excludeInlineSchemaPackages.isEmpty()) {
         visitor.setVisitorContext(
             new ExcludeInlineSchemaVisitorContext(excludeInlineSchemaPackages));
-      }      
+      }
       objectMapper.acceptJsonFormatVisitor(actual.getObject().getClass(), visitor);
       JsonSchema schema = visitor.finalSchema();
       if (!allowAdditionalProperties && schema.isObjectSchema()) {
         schema.asObjectSchema().rejectAdditionalProperties();
       }
-      return  objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
+      return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
 
     } catch (IOException e) {
       throw new UncheckedIOException("Unable to generate JSON schema", e);
@@ -264,7 +261,7 @@ public abstract class AbstractJsonObjectAssert<S extends AbstractJsonObjectAsser
     if (projectDirectory == null) {
       throw new RuntimeException(
           "Project directory must be set explicity when using a non-local class.");
-    }    
+    }
     return Paths.get(
         projectDirectory,
         "src/test/resources/",

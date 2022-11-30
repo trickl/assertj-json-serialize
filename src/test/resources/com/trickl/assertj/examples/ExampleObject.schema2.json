@@ -1,0 +1,11 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:com:trickl:assertj:examples:ExampleObject",
+  "additionalProperties" : false,
+  "properties" : {
+    "my-field" : {
+      "type" : "string",
+      "description" : "Description of my field"
+    }
+  }
+}
