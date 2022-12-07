@@ -50,7 +50,7 @@
     <dependency>
       <groupId>com.github.trickl</groupId>
       <artifactId>assertj-json</artifactId>
-      <version>0.2.15-SNAPSHOT</version>
+      <version>0.2.15</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
