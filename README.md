@@ -37,11 +37,19 @@ To download the library into a folder called "assertj-json-serialize" run
 git clone https://github.com/trickl/assertj-json-serialize.git
 ```
 
+Prerequisites:
+
+- JDK 17 or newer
+- Maven 3.9+
+
 To build the library run
 
 ```
-mvn clean build
+mvn clean verify
 ```
+
+The build skips artifact signing by default. When preparing a release, re-enable
+signing with `-Dgpg.skip=false`.
 
 ## Acknowledgments
 

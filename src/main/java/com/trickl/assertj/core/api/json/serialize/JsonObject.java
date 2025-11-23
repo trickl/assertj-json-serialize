@@ -1,8 +1,14 @@
 package com.trickl.assertj.core.api.json.serialize;
 
-import lombok.Value;
+/** Simple wrapper that records the object under test for JSON assertions. */
+public record JsonObject(Object object) {
 
-@Value
-public class JsonObject {
-  private final Object object;
+  /**
+   * Retains the legacy accessor signature so existing code can still call {@code getObject()}.
+   *
+   * @return the wrapped object under test
+   */
+  public Object getObject() {
+    return object;
+  }
 }

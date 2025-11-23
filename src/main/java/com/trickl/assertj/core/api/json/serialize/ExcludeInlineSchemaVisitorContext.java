@@ -3,11 +3,17 @@ package com.trickl.assertj.core.api.json.serialize;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.module.jsonSchema.factories.VisitorContext;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+/**
+ * Visitor context that prevents Jackson from inlining schemas for specific packages so their
+ * definitions stay referenced by URI instead.
+ */
 public class ExcludeInlineSchemaVisitorContext extends VisitorContext {
   private final List<String> excludePackages;
+
+  public ExcludeInlineSchemaVisitorContext(List<String> excludePackages) {
+    this.excludePackages = excludePackages;
+  }
 
   @Override
   public String getSeenSchemaUri(JavaType javaType) {
